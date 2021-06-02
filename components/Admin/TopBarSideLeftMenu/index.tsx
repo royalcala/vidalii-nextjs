@@ -15,6 +15,9 @@ import Link from '@material-ui/core/Link';
 import { useRouter } from 'next/router'
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        list: {
+            width: 250,
+          },
         menuButton: {
             marginRight: theme.spacing(2),
         },
@@ -56,8 +59,7 @@ export default function SideLeftMenu() {
                 <MenuIcon />
             </IconButton>
             <Drawer anchor="left" open={drawer} onClose={toggleDrawer(false)}>
-                <h1 className={classes.titleSidebar}>Vidalii ERP</h1>
-                <Divider />
+                <h1 className={classes.titleSidebar}>Vidalii ERP</h1>                
                 <Items />
             </Drawer>
         </>
@@ -83,7 +85,8 @@ function Items() {
                 </Link>
                 }
             </Breadcrumbs>
-            <List>
+            <Divider />
+            <List className={classes.list}>
                 {subItems === null
                     ?
                     Object.entries(Options).map(

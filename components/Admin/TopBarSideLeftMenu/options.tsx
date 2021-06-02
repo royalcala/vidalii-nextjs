@@ -1,6 +1,7 @@
 import React from 'react'
-import MailIcon from '@material-ui/icons/Mail';
-
+import PeopleIcon from '@material-ui/icons/People';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import EditIcon from '@material-ui/icons/Edit';
 const Options: {
     [key: string]: {
         Icon: React.FunctionComponent,
@@ -13,13 +14,19 @@ const Options: {
 } = {}
 
 Options.Users = {
-    Icon: () => <MailIcon />,
+    Icon: () => <PeopleIcon />,
     items: [
         {
-            Icon: () => <MailIcon />,
-            text: "new User",
-            route:"/login"
+            Icon: () => <PersonAddIcon />,
+            text: "New User",
+            route: "/admin/users/new"
+        },
+        {
+            Icon: () => <EditIcon />,
+            text: "Edit User",
+            route: "/admin/users/edit"
         }
+
     ]
 }
 export default Options

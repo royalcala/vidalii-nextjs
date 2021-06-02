@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { connectToDatabase } from '../../util/mongodb'
+import { connectToDatabase } from '../../../util/mongodb'
 import { hash } from 'bcrypt';
 export default async function login(req: NextApiRequest, res: NextApiResponse) {
     const { db } = await connectToDatabase()

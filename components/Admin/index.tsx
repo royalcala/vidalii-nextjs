@@ -8,6 +8,9 @@ import SearchIcon from '@material-ui/icons/Search';
 import DesktopMenu from "./TopBarMenuDesktop";
 import MobilMenu from './TopBarMenuMobil'
 import SideLeftMenu from './TopBarSideLeftMenu'
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Link from '@material-ui/core/Link';
+import LinearProgress from '@material-ui/core/LinearProgress';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         grow: {
@@ -71,10 +74,21 @@ const useStyles = makeStyles((theme: Theme) =>
                 display: 'none',
             },
         },
+        breadcrumb: {
+            margin: theme.spacing(2)
+        }
     }),
 );
 
-export default function TopBar(props: any) {
+export default function Admin(props: {
+    breadcrumb: {
+        page1: string,
+        page2: string
+    },
+    progress: boolean,
+    dialog: null | React.Component,
+    children: any
+}) {
     const classes = useStyles();
 
     return (
@@ -107,7 +121,22 @@ export default function TopBar(props: any) {
                     </div>
                 </Toolbar>
             </AppBar>
-            {props.children}
+
+            <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumb}>
+                <Link color="inherit" href="#">
+                    Root
+            </Link>
+                <Link color="inherit" href="#">
+                    {props.breadcrumb.page1}
+                </Link>
+                <Typography color="textPrimary">{props.breadcrumb.page2}</Typography>
+            </Breadcrumbs>
+            {props.progress && <LinearProgress />}
+            <div className={classes.breadcrumb}>
+
+                {props.children}
+            </div>
+
         </div>
     );
 }
