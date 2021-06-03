@@ -86,7 +86,7 @@ export default function Admin(props: {
         page2: string
     },
     progress: boolean,
-    dialog: null | React.Component,
+    // dialog: null | JSX.Element,
     children: any
 }) {
     const classes = useStyles();

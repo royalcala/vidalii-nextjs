@@ -1,10 +1,11 @@
 import React from 'react';
 import { useForm, Controller } from "react-hook-form";
-import Input from '@material-ui/core/Input'
 import Button from '@material-ui/core/Button'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Admin from "../../../components/Admin";
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,7 +25,7 @@ export default function New() {
   const classes = useStyles();
   const { control, handleSubmit, getValues } = useForm();
   const [progress, setProgress] = React.useState(false)
-  const [dialog, setDialog] = React.useState<null | any>(null)
+  const [dialog, setDialog] = React.useState(false)
   async function onSubmit(data: any) {
     setProgress(true)
     const resp = await fetch('http://localhost:3000/api/users/new', {
@@ -35,7 +36,7 @@ export default function New() {
       body: JSON.stringify(getValues())
     })
     setProgress(false)
-    setDialog(<div>User Created</div>)
+    setDialog(true)
   }
   return (
     <Admin breadcrumb={{ page1: "Users", page2: "New User" }} progress={progress} dialog={dialog}>
@@ -94,6 +95,13 @@ export default function New() {
         />
         <Button type="submit" variant="contained" color="primary">New User</Button>
       </form>
+      <Dialog
+        open={dialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"User created"}</DialogTitle>
+      </Dialog>
     </Admin>
   )
 }
