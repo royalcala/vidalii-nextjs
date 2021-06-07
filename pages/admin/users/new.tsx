@@ -26,23 +26,27 @@ export default function New() {
   const { control, handleSubmit, getValues } = useForm();
   const [progress, setProgress] = React.useState(false)
   const [dialog, setDialog] = React.useState(false)
+  const [msgDialog,setMsgDialog] = React.useState("")
   async function onSubmit(data: any) {
     setProgress(true)
-    const resp = await fetch('http://localhost:3000/api/users/new', {
+    const resp = await fetch('http://localhost:3000/api/admin/users/new', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(getValues())
     })
+    console.log("typeof:",typeof resp, resp)
     setProgress(false)
+    
+    setMsgDialog("")
     setDialog(true)
   }
   return (
-    <Admin breadcrumb={{ page1: "Users", page2: "New User" }} progress={progress} dialog={dialog}>
+    <Admin breadcrumb={{ page1: "Users", page2: "New User" }} progress={progress} login={true}>
       <form onSubmit={handleSubmit(onSubmit)} className={classes.root}>
         <Controller
-          name="firstName"
+          name="firstname"
           control={control}
           defaultValue=""
           rules={{ required: 'Firstname required' }}
@@ -97,10 +101,11 @@ export default function New() {
       </form>
       <Dialog
         open={dialog}
+        onClose={() => setDialog(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"User created"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{msgDialog}</DialogTitle>
       </Dialog>
     </Admin>
   )

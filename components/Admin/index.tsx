@@ -11,6 +11,8 @@ import SideLeftMenu from './TopBarSideLeftMenu'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Login from "./login";
+import Cookies from 'js-cookie'
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         grow: {
@@ -81,62 +83,65 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function Admin(props: {
+    login?: boolean,
     breadcrumb: {
         page1: string,
         page2: string
     },
-    progress: boolean,
+    progress?: boolean,
     // dialog: null | JSX.Element,
     children: any
 }) {
     const classes = useStyles();
-
-    return (
-        <div className={classes.grow}>
-            <AppBar position="static">
-                <Toolbar variant="dense">
-                    <SideLeftMenu />
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        Vidalii-ERP
+    if (props?.login === true && Cookies.get("auth") === undefined)
+        return <Login  />
+    else
+        return (
+            <div className={classes.grow}>
+                <AppBar position="static">
+                    <Toolbar variant="dense">
+                        <SideLeftMenu />
+                        <Typography className={classes.title} variant="h6" noWrap>
+                            Vidalii-ERP
           </Typography>
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
+                        <div className={classes.search}>
+                            <div className={classes.searchIcon}>
+                                <SearchIcon />
+                            </div>
+                            <InputBase
+                                placeholder="Search…"
+                                classes={{
+                                    root: classes.inputRoot,
+                                    input: classes.inputInput,
+                                }}
+                                inputProps={{ 'aria-label': 'search' }}
+                            />
                         </div>
-                        <InputBase
-                            placeholder="Search…"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </div>
-                    <div className={classes.grow} />
-                    <div className={classes.sectionDesktop}>
-                        <DesktopMenu />
-                    </div>
-                    <div className={classes.sectionMobile}>
-                        <MobilMenu />
-                    </div>
-                </Toolbar>
-            </AppBar>
+                        <div className={classes.grow} />
+                        <div className={classes.sectionDesktop}>
+                            <DesktopMenu />
+                        </div>
+                        <div className={classes.sectionMobile}>
+                            <MobilMenu />
+                        </div>
+                    </Toolbar>
+                </AppBar>
 
-            <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumb}>
-                <Link color="inherit" href="#">
-                    Root
+                <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumb}>
+                    <Link color="inherit" href="#">
+                        Root
             </Link>
-                <Link color="inherit" href="#">
-                    {props.breadcrumb.page1}
-                </Link>
-                <Typography color="textPrimary">{props.breadcrumb.page2}</Typography>
-            </Breadcrumbs>
-            {props.progress && <LinearProgress />}
-            <div className={classes.breadcrumb}>
+                    <Link color="inherit" href="#">
+                        {props.breadcrumb.page1}
+                    </Link>
+                    <Typography color="textPrimary">{props.breadcrumb.page2}</Typography>
+                </Breadcrumbs>
+                {props?.progress && <LinearProgress />}
+                <div className={classes.breadcrumb}>
 
-                {props.children}
+                    {props.children}
+                </div>
+
             </div>
-
-        </div>
-    );
+        );
 }

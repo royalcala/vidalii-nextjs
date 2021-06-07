@@ -1,11 +1,15 @@
 import { useRef, useState } from 'react';
+import { useRouter } from 'next/router'
 
-export default function Login() {
+export default function Login(props: {
+  redirect?: string
+}) {
+  const router = useRouter()
   const emailRef = useRef<HTMLInputElement>(null);
   const passRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<any>();
   async function handleLogin() {
-    const resp = await fetch('http://localhost:3000/api/login', {
+    const resp = await fetch('http://localhost:3000/api/admin/session/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -16,8 +20,11 @@ export default function Login() {
       })
     });
     const json = await resp.json();
-    setMessage(json);
-  }  
+    if (json.success === true)
+      router.push(props?.redirect || '/admin')
+    else
+      setMessage(json.message);
+  }
   return (
     <div>
       {JSON.stringify(message)}
