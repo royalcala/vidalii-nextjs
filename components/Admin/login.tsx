@@ -7,7 +7,7 @@ export default function Login() {
     const passRef = useRef<HTMLInputElement>(null);
     const [message, setMessage] = useState<any>();
     async function handleLogin() {
-        const resp = await fetch('http://localhost:3000/api/admin/session/login', {
+        const resp = await fetch('/api/admin/session/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

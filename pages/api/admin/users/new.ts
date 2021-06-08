@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from '../../../../util/mongodb'
 import { hash } from 'bcrypt';
+import dbConnect from '../../../../util/mongodb'
 import Users from '../../../../models/users'
 
 
@@ -14,12 +14,12 @@ export default async function newUser(req: NextApiRequest, res: NextApiResponse)
         user.password = hash
         const schema = new Users(user)//returns only the schema
         try {
-            const result = await schema.save();//returns all with _id            
-            res.status(201).json({ success: true, result })
+            const data = await schema.save();//returns all with _id            
+            res.status(201).json({ success: true, data })
 
         } catch (err) {
             console.log(err.message)
-            res.status(400).json({ sucess: false, result: null, msg: err.message })
+            res.status(400).json({ sucess: false, data: null, msg: err.message })
         }
         // const data = await Users.create(user)
         // const response = await db.collection("users").insertOne(user)
