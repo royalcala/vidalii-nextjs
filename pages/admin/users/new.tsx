@@ -28,13 +28,14 @@ export default function New() {
   const [dialog, setDialog] = React.useState(false)
   const [msgDialog, setMsgDialog] = React.useState("")
   async function onSubmit(data: any) {
+    // getValues()
     setProgress(true)
     const resp = await fetch('/api/admin/users/new', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(getValues())
+      body: JSON.stringify(data)
     })
     const json = await resp.json();
     setProgress(false)
