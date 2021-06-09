@@ -10,6 +10,9 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { useForm, Controller } from "react-hook-form";
 import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -24,10 +27,23 @@ const useStyles = makeStyles((theme: Theme) =>
             marginRight: theme.spacing(1),
             width: '25ch',
         },
+        buttonFilter: {
+            // float:"right"
+        }
     }),
 );
 
+function FilterButton() {
+    const theme = useTheme();
+    const matches = useMediaQuery(theme.breakpoints.down('sm'));
 
+    // return <span>{`theme.breakpoints.up('sm') matches: ${matches}`}</span>;
+    if (matches)
+        return <Button color="primary" >Filter</Button>
+    else
+    return <></>
+
+}
 export default function List(props: {
     api: string,
     head: {
@@ -63,13 +79,13 @@ export default function List(props: {
         }
 
         fetchMyAPI()
-    }, [filter,page,rowsPerPage])
+    }, [filter, page, rowsPerPage])
 
-    const handleChangePage =  (event: unknown, newPage: number) => {
+    const handleChangePage = (event: unknown, newPage: number) => {
         setPage(newPage);
     };
 
-    const handleChangeRowsPerPage =  (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
@@ -89,43 +105,42 @@ export default function List(props: {
                 ...current
             }), {}
         )
-        console.log(mongoFilter)
-        setFilter(mongoFilter || {})        
-        // filter = mongoFilter || {}
-        // await fetchRows()
+        setFilter(mongoFilter || {})
     }
 
 
     return (
-        <Paper className={classes.root}>
-            <TableContainer className={classes.container}>
-                <Table stickyHeader aria-label="sticky table">
-                    <TableHead>
-                        <TableRow>
-                            {props.head.map(
-                                ({ label }, index) => <TableCell
-                                    key={index}
-                                    // align="right"
-                                    style={{ minWidth: 170 }}
-                                >
-                                    <Controller
-                                        name={label}
-                                        control={control}
-                                        defaultValue=""
-                                        render={({ field, fieldState: { error } }) => <TextField
-                                            {...field}
-                                            label={label}
-                                            className={classes.textField}
-                                            onKeyDown={(e: any) => {
-                                                if (e.key === 'Enter') {
-                                                    onFilter()
-                                                }
-                                            }}
-                                        />}
-                                    />
-                                </TableCell>
-                            )}
-                            {/* {columns.map((column) => (
+        <>
+            <FilterButton />
+            <Paper className={classes.root}>
+                <TableContainer className={classes.container}>
+                    <Table stickyHeader aria-label="sticky table">
+                        <TableHead>
+                            <TableRow>
+                                {props.head.map(
+                                    ({ label }, index) => <TableCell
+                                        key={index}
+                                        // align="right"
+                                        style={{ minWidth: 170 }}
+                                    >
+                                        <Controller
+                                            name={label}
+                                            control={control}
+                                            defaultValue=""
+                                            render={({ field, fieldState: { error } }) => <TextField
+                                                {...field}
+                                                label={label}
+                                                className={classes.textField}
+                                                onKeyDown={(e: any) => {
+                                                    if (e.key === 'Enter') {
+                                                        onFilter()
+                                                    }
+                                                }}
+                                            />}
+                                        />
+                                    </TableCell>
+                                )}
+                                {/* {columns.map((column) => (
                                 <TableCell
                                     key={column.id}
                                     align={column.align}
@@ -134,24 +149,24 @@ export default function List(props: {
                                     {column.label}
                                 </TableCell>
                             ))} */}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {docs === null
-                            ? props.initialDocs.map(
-                                (doc, index) => {
-                                    return props.row(doc, index)
-                                }
-                            )
-                            //@ts-ignore
-                            : docs.map(
-                                (doc: any, index: number) => {
-                                    return props.row(doc, index)
-                                }
-                            )
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {docs === null
+                                ? props.initialDocs.map(
+                                    (doc, index) => {
+                                        return props.row(doc, index)
+                                    }
+                                )
+                                //@ts-ignore
+                                : docs.map(
+                                    (doc: any, index: number) => {
+                                        return props.row(doc, index)
+                                    }
+                                )
 
-                        }
-                        {/* {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                            }
+                            {/* {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                             return (
                                 <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                                     {columns.map((column) => {
@@ -165,19 +180,19 @@ export default function List(props: {
                                 </TableRow>
                             );
                         })} */}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[25, 50, 100]}
-                component="div"
-                count={props.totalRows}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-            />
-
-        </Paper>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[25, 50, 100]}
+                    component="div"
+                    count={props.totalRows}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onChangePage={handleChangePage}
+                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                />
+            </Paper>
+        </>
     );
 }

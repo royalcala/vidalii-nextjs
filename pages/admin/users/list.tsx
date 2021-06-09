@@ -5,7 +5,8 @@ import Admin from '../../../components/Admin'
 import List from '../../../components/List'
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import Link from '@material-ui/core/Link';
 export default function UsersList(props: { total: number, data: any[] }) {
     return (
         <Admin breadcrumb={{ page1: "Users", page2: "List Users" }}>
@@ -22,7 +23,14 @@ export default function UsersList(props: { total: number, data: any[] }) {
                     return (
                         <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                             <TableCell key="firstname" >
-                                {user.firstname}
+                                <div>
+                                <a target="_blank" href={"/admin/users/edit?_id="+user._id}>
+                                    <OpenInNewIcon />
+                                </a>
+                                    {user.firstname}
+                                   
+                                </div>
+
                             </TableCell>
                             <TableCell key="lastname" >
                                 {user.lastname}

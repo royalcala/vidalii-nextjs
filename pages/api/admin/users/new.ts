@@ -21,16 +21,5 @@ export default async function newUser(req: NextApiRequest, res: NextApiResponse)
             console.log(err.message)
             res.status(400).json({ sucess: false, data: null, msg: err.message })
         }
-        // const data = await Users.create(user)
-        // const response = await db.collection("users").insertOne(user)
-        // res.json(response)
-        // const statement = await db.prepare(
-        //     'INSERT INTO person (name, email, password) values (?, ?, ?)'
-        // );
-        // const result = await statement.run(req.body.name, req.body.email, hash);
-        // result.finalize();
-
-        // const person = await db.all('select * from person');
-        // res.json(person);
     });
 }
