@@ -6,6 +6,7 @@ import Users from '../../../../models/users'
 export default async function newUser(req: NextApiRequest, res: NextApiResponse) {
     await dbConnect()
     const user = req.body
+    console.log(user)
     const result = await Users.updateOne({ _id: user._id }, user);
-    res.json(result)
+    res.json({success:true,msg:''})
 }
