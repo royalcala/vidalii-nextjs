@@ -11,6 +11,7 @@ export default function UsersList(props: { total: number, data: any[] }) {
     return (
         <Admin breadcrumb={{ page1: "Users", page2: "List Users" }}>
             <List
+                options={true}
                 api="/api/admin/users/list"
                 totalRows={props.total}
                 initialDocs={props.data}
@@ -22,13 +23,16 @@ export default function UsersList(props: { total: number, data: any[] }) {
                 row={(user: any, index) => {
                     return (
                         <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                            <TableCell key="firstname" >
-                                <div>
-                                <a target="_blank" href={"/admin/users/edit?_id="+user._id}>
+                            <TableCell key="lastname" >
+                                <a target="_blank" href={"/admin/users/edit?_id=" + user._id}>
                                     <OpenInNewIcon />
                                 </a>
+                            </TableCell>
+                            <TableCell key="firstname" >
+                                <div>
+
                                     {user.firstname}
-                                   
+
                                 </div>
 
                             </TableCell>

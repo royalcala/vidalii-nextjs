@@ -11,7 +11,7 @@ export default function DefaultPage(props: any) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
 
-    console.log("******running in server2")
+    
     return {
         props: {}
     }

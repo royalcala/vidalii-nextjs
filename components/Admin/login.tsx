@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 
 export default function Login() {
-    const router = useRouter()
+    // const router = useRouter()
     const emailRef = useRef<HTMLInputElement>(null);
     const passRef = useRef<HTMLInputElement>(null);
     const [message, setMessage] = useState<any>();

@@ -10,6 +10,7 @@ import Admin from "../../../components/Admin";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
+import cookie from 'cookie';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -21,9 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
             marginRight: theme.spacing(1),
             width: '25ch',
         },
-        buttons:{
-            '& button':{
-                marginRight:theme.spacing(1)
+        buttons: {
+            '& button': {
+                marginRight: theme.spacing(1)
             }
             // marginRight:theme.spacing(1)
         }
@@ -135,6 +136,7 @@ export default function EditUser(props: { user: any }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     await dbConnect()
+   console.log(cookie.parse(context.req.headers.cookie || ''))
     const user = await Users.findById(context.query._id)
     return {
         props: {

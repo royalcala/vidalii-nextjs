@@ -13,7 +13,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-
+import Account from './Account'
 export default function MenuMobil() {
     const mobileMenuId = 'primary-search-account-menu-mobile';
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -34,7 +34,7 @@ export default function MenuMobil() {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            <MenuItem>
+            {/* <MenuItem>
                 <IconButton aria-label="show 4 new mails" color="inherit">
                     <Badge badgeContent={5} color="secondary">
                         <MailIcon />
@@ -49,7 +49,8 @@ export default function MenuMobil() {
                     </Badge>
                 </IconButton>
                 <p>Notifications</p>
-            </MenuItem>
+            </MenuItem> */}
+
             {/* <MenuItem onClick={handleProfileMenuOpen}>
                 <IconButton
                     aria-label="account of current user"
@@ -61,6 +62,7 @@ export default function MenuMobil() {
                 </IconButton>
                 <p>Profile</p>
             </MenuItem> */}
+            <Account/>  
         </Menu>
     );
 

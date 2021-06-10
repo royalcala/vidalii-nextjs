@@ -41,10 +41,11 @@ function FilterButton() {
     if (matches)
         return <Button color="primary" >Filter</Button>
     else
-    return <></>
+        return <></>
 
 }
 export default function List(props: {
+    options: boolean,
     api: string,
     head: {
         label: string,
@@ -117,6 +118,7 @@ export default function List(props: {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
+                                {props.options && <TableCell />}                            
                                 {props.head.map(
                                     ({ label }, index) => <TableCell
                                         key={index}
