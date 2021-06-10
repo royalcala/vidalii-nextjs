@@ -11,6 +11,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
 import cookie from 'cookie';
+
+export const accessGroup = "admin.users.edit"
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -136,7 +138,7 @@ export default function EditUser(props: { user: any }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     await dbConnect()
-   console.log(cookie.parse(context.req.headers.cookie || ''))
+    console.log(cookie.parse(context.req.headers.cookie || ''))
     const user = await Users.findById(context.query._id)
     return {
         props: {

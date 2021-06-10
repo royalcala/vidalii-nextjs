@@ -21,7 +21,7 @@ export const Definition: mongoose.SchemaDefinition = {
         type: String,
         required: [true, "password required"]
     },
-
+    groups: [String]
 }
 
 export const Schema = new mongoose.Schema(Definition)
