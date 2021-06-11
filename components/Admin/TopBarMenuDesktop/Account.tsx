@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 // import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import { AUTH } from '../../../util/getCookies';
 export default function MenuAccount() {
     // const router = useRouter()
     const menuId = 'primary-search-account-menu';
@@ -34,7 +35,7 @@ export default function MenuAccount() {
     }}>Profile</MenuItem> */}
         <MenuItem onClick={() => {
             //remove session
-            Cookies.remove("auth")
+            Cookies.remove(AUTH)
             location.reload();
         }}>Logout</MenuItem>
     </Menu>

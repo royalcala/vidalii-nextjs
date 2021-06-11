@@ -21,6 +21,7 @@ export const Definition: mongoose.SchemaDefinition = {
         type: String,
         required: [true, "password required"]
     },
+    admin: Boolean,
     groups: [String]
 }
 

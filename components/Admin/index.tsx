@@ -13,6 +13,7 @@ import Link from '@material-ui/core/Link';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Login from "./login";
 import Cookies from 'js-cookie'
+import { AUTH } from '../../util/getCookies';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         grow: {
@@ -93,7 +94,7 @@ export default function Admin(props: {
     children: any
 }) {
     const classes = useStyles();
-    if (props?.login === true && Cookies.get("auth") === undefined)
+    if (props?.login === true && Cookies.get(AUTH) === undefined)
         return <Login  />
     else
         return (

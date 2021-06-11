@@ -4,6 +4,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
 import Cookies from 'js-cookie'
+import { AUTH } from '../../../util/getCookies';
 export default function Account() {
     const menuId = 'primary-search-account-menu';
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -28,7 +29,7 @@ export default function Account() {
     >
         <MenuItem onClick={() => {
             //remove session
-            Cookies.remove("auth")
+            Cookies.remove(AUTH)
             location.reload();
         }}>Logout</MenuItem>
     </Menu>

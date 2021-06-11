@@ -10,9 +10,10 @@ import Admin from "../../../components/Admin";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
-import cookie from 'cookie';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { getAccessGroups } from "../../api/admin/session/accessGroups";
 
-export const accessGroup = "admin.users.edit"
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -32,15 +33,40 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     }),
 );
-
-export default function EditUser(props: { user: any }) {
+export const accessGroup = "admin_users_edit"
+export default function EditUser(props: { user: any, accessGroups: { api: string[], admin: string[] } }) {
+    console.log(props)
     const classes = useStyles();
     const { control, handleSubmit, getValues } = useForm();
     const [progress, setProgress] = React.useState(false)
     const [dialog, setDialog] = React.useState(false)
     const [msgDialog, setMsgDialog] = React.useState("")
+    // const [adminCheck, setAdminCheck] = React.useState(props.user?.admin || false);
+
     async function onSubmit(data: any) {
-        // getValues()
+        const adminPages = Object.entries(data.adminPages).map(
+            ([key, value]) => {
+                if (value)
+                    return key
+                else
+                    return false
+            }
+        ).filter(value => value !== false)
+        const adminApi = Object.entries(data.adminApi).map(
+            ([key, value]) => {
+                if (value)
+                    return key
+                else
+                    return false
+            }
+        ).filter(value => value !== false)
+        delete data.adminPages
+        delete data.adminApi
+        data.groups = [...adminPages, ...adminApi]
+        // alert(JSON.stringify(data))
+        // return false
+        if (data?.password === '')
+            delete data.password
         setProgress(true)
         data._id = props.user._id
         const resp = await fetch('/api/admin/users/edit', {
@@ -64,7 +90,7 @@ export default function EditUser(props: { user: any }) {
                 <Grid container spacing={3}>
                     <Grid item xs={12} className={classes.buttons}>
                         <Button type="submit" variant="contained" color="primary">Save User</Button>
-                        <Button variant="contained" color="primary">Reset Password</Button>
+                        {/* <Button variant="contained" color="primary">Reset Password</Button> */}
                     </Grid>
                     <Grid item>
                         <Controller
@@ -108,18 +134,86 @@ export default function EditUser(props: { user: any }) {
                                 helperText={error ? error.message : null}
                             />}
                         />
-                        {/* <Controller
+                        <Controller
                             name="password"
                             control={control}
                             defaultValue=""
-                            rules={{ required: "Password required" }}
+                            // rules={{ required: "Password required" }}
                             render={({ field, fieldState: { error } }) => <TextField
                                 {...field} label="password" className={classes.textField} type="password"
                                 error={!!error}
                                 helperText={error ? error.message : null}
                             />}
-                        /> */}
+                        />
                     </Grid>
+                    <Grid item xs={12}>
+                        <Controller
+                            name="admin"
+                            control={control}
+                            defaultValue={props.user.admin || false}
+                            // rules={{ required: 'Firstname required' }}
+                            render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
+                                {...field}
+                                checked={field.value}
+                                color="primary"
+                                inputProps={{ 'aria-label': 'secondary checkbox' }}
+                            />}
+                                label="Admin"
+                            />
+                            }
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        admin Pages:<br />
+                        {props.accessGroups.admin.map((key, index) => {
+                            return (
+                                <>
+                            <Controller
+                                key={index}
+                                name={"adminPages." + key}
+                                control={control}
+                                defaultValue={props.user.groups.find((value:string) => value === key) ? true : false}
+                                render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
+                                    {...field}
+                                    checked={field.value}
+                                    color="primary"
+                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                />}
+                                    label={key}
+                                />
+                                }
+                            />
+                            <br/>
+                            </>
+                            )
+                        })}
+                    </Grid>
+                    <Grid item xs={6}>
+                        admin API:<br />
+                        {props.accessGroups.api.map((key, index) => {
+                            return (
+                            <>
+                            <Controller
+                                key={index}
+                                name={"adminApi." + key}
+                                control={control}
+                                defaultValue={props.user.groups.find((value:string) => value === key) ? true : false}
+                                render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
+                                    {...field}
+                                    checked={field.value}
+                                    color="primary"
+                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                />}
+                                    label={key}
+                                />
+                                }
+                            />
+                            <br/>
+                            </>
+                            )
+                        })}
+                    </Grid>
+
                 </Grid>
             </form>
             <Dialog
@@ -138,11 +232,13 @@ export default function EditUser(props: { user: any }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     await dbConnect()
-    console.log(cookie.parse(context.req.headers.cookie || ''))
+    // console.log(cookie.parse(context.req.headers.cookie || ''))
     const user = await Users.findById(context.query._id)
+    const accessGroups = await getAccessGroups()
     return {
         props: {
-            user: JSON.parse(JSON.stringify(user))
+            user: JSON.parse(JSON.stringify(user)),
+            accessGroups
         }
     }
 }

@@ -1,12 +1,14 @@
 import { GetServerSidePropsContext } from 'next';
 import Users from "../../../models/users"
-import { initialDocs } from '../../../util/api.list'
+import { initialDocs } from '../../../util/getData'
 import Admin from '../../../components/Admin'
 import List from '../../../components/List'
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import Link from '@material-ui/core/Link';
+
+export const accessGroup = 'admin_users_list'
 export default function UsersList(props: { total: number, data: any[] }) {
     return (
         <Admin breadcrumb={{ page1: "Users", page2: "List Users" }}>
@@ -51,4 +53,4 @@ export default function UsersList(props: { total: number, data: any[] }) {
     )
 }
 
-export const getServerSideProps = initialDocs(Users)
+export const getServerSideProps = initialDocs(Users,25)

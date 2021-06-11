@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 // import dbConnect from '../../../../util/mongodb'
 import Users from '../../../../models/users'
-import { api } from '../../../../util/api.list'
+import { api } from '../../../../util/getData'
 
 export default api(Users)
 // export default async function ListUsers(req: NextApiRequest, res: NextApiResponse) {

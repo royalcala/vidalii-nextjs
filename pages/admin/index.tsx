@@ -1,7 +1,10 @@
 import Admin from "../../components/Admin";
 import { GetServerSidePropsContext } from 'next'
-
-export default function DefaultPage(props: any) {
+// import { initialDocs, Props } from "./utils/initialDocs";
+import Users from '../../models/users'
+export default function DefaultPage(props: Props) {
+    // if (props.restricted)
+    //     return props.restricted
     return (
         <Admin breadcrumb={{ page1: "Default", page2: "" }} login={true} >
             <div>hola2</div>
@@ -9,10 +12,4 @@ export default function DefaultPage(props: any) {
     )
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-
-    
-    return {
-        props: {}
-    }
-}
+// export const getServerSideProps = initialDocs(Users, 1)
