@@ -1,9 +1,9 @@
 import { GetServerSidePropsContext } from "next";
-import cookie from 'cookie';
+// import cookie from 'cookie';
 export const AUTH = 'AUTH'
-export function getCookies(context: GetServerSidePropsContext) {
-    const cookies = cookie.parse(context.req.headers.cookie || '')
+export function getCookies(req: GetServerSidePropsContext['req']) {
+    // const cookies = cookie.parse(req.headers.cookie || '')
     return {
-        "AUTH": cookies[AUTH]
+        "AUTH": req.cookies?.[AUTH]
     }
 }

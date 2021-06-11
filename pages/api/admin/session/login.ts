@@ -4,9 +4,9 @@ import { sign } from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '../../../../util/mongodb'
 import Users from '../../../../models/users'
-import { AUTH} from "../../../../util/getCookies";
-// export const accessGroup = "api_admin_session_login"
-export const SECRET = process.env.SECRET || 'MySecret1*'
+import { AUTH } from "../../../../util/getCookies";
+import { Jwt, SECRET } from '../../../../util/auth'
+
 export default async function login(req: NextApiRequest, res: NextApiResponse) {
   await dbConnect()
   if (req.method === 'POST') {
@@ -15,9 +15,9 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
     })
     compare(req.body.password, user.password, function (err, result) {
       if (!err && result) {
-        const claims = { _id: user._id};
+        const claims: Jwt = { _id: user._id };
         const jwt = sign(claims, SECRET, { expiresIn: '1d' });
-       
+
         res.setHeader('Set-Cookie', cookie.serialize(AUTH, jwt, {
           // httpOnly: true,
           // secure: process.env.NODE_ENV !== 'development',

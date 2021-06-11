@@ -1,17 +1,23 @@
 import { GetServerSidePropsContext } from 'next';
 import Users from "../../../models/users"
-import { initialDocs } from '../../../util/getData'
+import { ValidateAccessPolicy } from '../../../util/auth'
+import dbConnect from '../../../util/mongodb'
 import Admin from '../../../components/Admin'
 import List from '../../../components/List'
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import Link from '@material-ui/core/Link';
+import { findMany, PropsFindMany } from '../../../util/getData';
 
-export const accessGroup = 'admin_users_list'
-export default function UsersList(props: { total: number, data: any[] }) {
+export const accessPolicy = 'admin_users_list'
+export default function UsersList(props: PropsFindMany) {
     return (
-        <Admin breadcrumb={{ page1: "Users", page2: "List Users" }}>
+        <Admin breadcrumb={{ page1: "Users", page2: "List Users" }}
+            login={{
+                access: props.access,
+                accessPolicy
+            }}
+        >
             <List
                 options={true}
                 api="/api/admin/users/list"
@@ -53,4 +59,4 @@ export default function UsersList(props: { total: number, data: any[] }) {
     )
 }
 
-export const getServerSideProps = initialDocs(Users,25)
+export const getServerSideProps = findMany(Users, 25, accessPolicy)

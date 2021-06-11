@@ -1,8 +1,7 @@
 import Admin from "../../components/Admin";
 import { GetServerSidePropsContext } from 'next'
-// import { initialDocs, Props } from "./utils/initialDocs";
-import Users from '../../models/users'
-export default function DefaultPage(props: Props) {
+
+export default function DefaultPage() {
     // if (props.restricted)
     //     return props.restricted
     return (
@@ -12,4 +11,9 @@ export default function DefaultPage(props: Props) {
     )
 }
 
-// export const getServerSideProps = initialDocs(Users, 1)
+export function getServerSideProps(context: GetServerSidePropsContext) {
+    return {
+        props: {}
+    }
+}
+

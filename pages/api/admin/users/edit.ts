@@ -3,10 +3,12 @@ import dbConnect from '../../../../util/mongodb'
 import Users from '../../../../models/users'
 import { hash } from 'bcrypt';
 
+export const accessPolicy = 'api_admin_users_edit'
 export default async function editUser(req: NextApiRequest, res: NextApiResponse) {
+    
     await dbConnect()
     const user = req.body
-    console.log('api:',user)
+    
     if (user?.password) {
         const hashPassword = await hash(user.password, 10);
         user.password = hashPassword

@@ -12,7 +12,8 @@ import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { getAccessGroups } from "../../api/admin/session/accessGroups";
+import { getAccessPolicies } from "../../api/admin/session/accessPolicies";
+import { ValidateAccessPolicy } from '../../../util/auth';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -33,9 +34,8 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     }),
 );
-export const accessGroup = "admin_users_edit"
-export default function EditUser(props: { user: any, accessGroups: { api: string[], admin: string[] } }) {
-    console.log(props)
+export const accessPolicy = "admin_users_edit"
+export default function EditUser(props: { access: boolean, user: any, accessPolicies: { api: string[], admin: string[] } }) {
     const classes = useStyles();
     const { control, handleSubmit, getValues } = useForm();
     const [progress, setProgress] = React.useState(false)
@@ -85,7 +85,10 @@ export default function EditUser(props: { user: any, accessGroups: { api: string
         setDialog(true)
     }
     return (
-        <Admin breadcrumb={{ page1: "Users", page2: "Edit User" }} progress={progress} login={true}>
+        <Admin breadcrumb={{ page1: "Users", page2: "Edit User" }}
+            progress={progress}
+            login={{ access:props.access, accessPolicy }}
+        >
             <form onSubmit={handleSubmit(onSubmit)} className={classes.root}>
                 <Grid container spacing={3}>
                     <Grid item xs={12} className={classes.buttons}>
@@ -165,51 +168,51 @@ export default function EditUser(props: { user: any, accessGroups: { api: string
                     </Grid>
                     <Grid item xs={6}>
                         admin Pages:<br />
-                        {props.accessGroups.admin.map((key, index) => {
+                        {props.accessPolicies.admin.map((key, index) => {
                             return (
                                 <>
-                            <Controller
-                                key={index}
-                                name={"adminPages." + key}
-                                control={control}
-                                defaultValue={props.user.groups.find((value:string) => value === key) ? true : false}
-                                render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
-                                    {...field}
-                                    checked={field.value}
-                                    color="primary"
-                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                />}
-                                    label={key}
-                                />
-                                }
-                            />
-                            <br/>
-                            </>
+                                    <Controller
+                                        key={index}
+                                        name={"adminPages." + key}
+                                        control={control}
+                                        defaultValue={props.user.groups.find((value: string) => value === key) ? true : false}
+                                        render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
+                                            {...field}
+                                            checked={field.value}
+                                            color="primary"
+                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                        />}
+                                            label={key}
+                                        />
+                                        }
+                                    />
+                                    <br />
+                                </>
                             )
                         })}
                     </Grid>
                     <Grid item xs={6}>
                         admin API:<br />
-                        {props.accessGroups.api.map((key, index) => {
+                        {props.accessPolicies.api.map((key, index) => {
                             return (
-                            <>
-                            <Controller
-                                key={index}
-                                name={"adminApi." + key}
-                                control={control}
-                                defaultValue={props.user.groups.find((value:string) => value === key) ? true : false}
-                                render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
-                                    {...field}
-                                    checked={field.value}
-                                    color="primary"
-                                    inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                />}
-                                    label={key}
-                                />
-                                }
-                            />
-                            <br/>
-                            </>
+                                <>
+                                    <Controller
+                                        key={index}
+                                        name={"adminApi." + key}
+                                        control={control}
+                                        defaultValue={props.user.groups.find((value: string) => value === key) ? true : false}
+                                        render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
+                                            {...field}
+                                            checked={field.value}
+                                            color="primary"
+                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                        />}
+                                            label={key}
+                                        />
+                                        }
+                                    />
+                                    <br />
+                                </>
                             )
                         })}
                     </Grid>
@@ -232,13 +235,20 @@ export default function EditUser(props: { user: any, accessGroups: { api: string
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     await dbConnect()
-    // console.log(cookie.parse(context.req.headers.cookie || ''))
+    const access = await ValidateAccessPolicy(context, accessPolicy)
+    if (access === false)
+        return {
+            props: {
+                access
+            }
+        }
     const user = await Users.findById(context.query._id)
-    const accessGroups = await getAccessGroups()
+    const accessPolicies = await getAccessPolicies()
     return {
         props: {
             user: JSON.parse(JSON.stringify(user)),
-            accessGroups
+            accessPolicies,
+            access: true
         }
     }
 }

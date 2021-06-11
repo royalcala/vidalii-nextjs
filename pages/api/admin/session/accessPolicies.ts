@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import glob from 'glob'
 import { Project } from "ts-morph";
 
-export function getAccessGroups() {
+export function getAccessPolicies() {
     const project = new Project();
     project.addSourceFilesAtPaths('pages/api/**/*.{tsx,js,ts}');
     const api = glob.sync('pages/api/**/*.{tsx,js,ts}').map(
@@ -10,7 +10,7 @@ export function getAccessGroups() {
             // console.log(path)
             const sourceFile = project.getSourceFile(path);
             // console.log('test: ', sourceFile.getVariableDeclaration('groupAccess')?.getName() || null)          
-            return sourceFile?.getVariableDeclaration('accessGroup')?.getInitializer()?.getText()
+            return sourceFile?.getVariableDeclaration('accessPolicy')?.getInitializer()?.getText()
         }
     ).filter(group => group !== undefined)
     .map(name => name?.replaceAll('"',""))
@@ -21,7 +21,7 @@ export function getAccessGroups() {
     const admin = glob.sync('pages/admin/**/*.{tsx,js,ts}').map(
         (path) => {
             const sourceFile = project2.getSourceFile(path);
-            return sourceFile?.getVariableDeclaration('accessGroup')?.getInitializer()?.getText()
+            return sourceFile?.getVariableDeclaration('accessPolicy')?.getInitializer()?.getText()
         }
     ).filter(group => group !== undefined)
     .map(name => name?.replaceAll('"',""))
@@ -32,8 +32,8 @@ export function getAccessGroups() {
     }
 }
 
-export default async function accessGroups(req: NextApiRequest, res: NextApiResponse) {
-    const { api, admin } = getAccessGroups()
+export default async function accessPolicies(req: NextApiRequest, res: NextApiResponse) {
+    const { api, admin } = getAccessPolicies()
     res.json({ api, admin })
     // console.log(api[0])
     // console.log(project.getfi)

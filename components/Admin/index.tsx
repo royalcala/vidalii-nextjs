@@ -84,7 +84,10 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function Admin(props: {
-    login?: boolean,
+    login?: {
+        accessPolicy: string,
+        access: boolean
+    },
     breadcrumb: {
         page1: string,
         page2: string
@@ -94,8 +97,8 @@ export default function Admin(props: {
     children: any
 }) {
     const classes = useStyles();
-    if (props?.login === true && Cookies.get(AUTH) === undefined)
-        return <Login  />
+    if (Cookies.get(AUTH) === undefined)
+        return <Login />
     else
         return (
             <div className={classes.grow}>
@@ -139,8 +142,10 @@ export default function Admin(props: {
                 </Breadcrumbs>
                 {props?.progress && <LinearProgress />}
                 <div className={classes.breadcrumb}>
-
-                    {props.children}
+                    {props.login?.access === true
+                        ? props.children
+                        : <div>You dont have access to policy:{props.login?.accessPolicy}</div>
+                    }
                 </div>
 
             </div>
