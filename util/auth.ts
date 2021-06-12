@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 import { getCookies } from './getCookies'
 import { verify } from 'jsonwebtoken';
-import dbConnect from './mongodb'
+import dbConnect from './db'
 import Users, { Definition as UserDefinition } from '../models/users'
 export const SECRET = process.env.SECRET || 'MySecret1*'
 export type Jwt = {

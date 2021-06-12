@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from './mongodb'
+import dbConnect from './db'
 import mongoose from 'mongoose'
 import { ValidateAccessPolicy } from './auth'
 export const api = (model: mongoose.Model<any>) => async (req: NextApiRequest, res: NextApiResponse) => {

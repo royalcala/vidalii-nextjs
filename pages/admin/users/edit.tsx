@@ -1,5 +1,5 @@
 import React from 'react';
-import dbConnect from '../../../util/mongodb'
+import dbConnect from '../../../util/db'
 import Users from '../../../models/users'
 import { GetServerSidePropsContext } from 'next'
 import { useForm, Controller } from "react-hook-form";

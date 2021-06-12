@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
 import Users from "../../../models/users"
 import { ValidateAccessPolicy } from '../../../util/auth'
-import dbConnect from '../../../util/mongodb'
+import dbConnect from '../../../util/db'
 import Admin from '../../../components/Admin'
 import List from '../../../components/List'
 import TableRow from '@material-ui/core/TableRow';
