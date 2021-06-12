@@ -13,6 +13,7 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
     const user = await Users.findOne({
       email: req.body.email
     })
+    // console.log(user)
     compare(req.body.password, user.password, function (err, result) {
       if (!err && result) {
         const claims: Jwt = { _id: user._id };
@@ -27,7 +28,7 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
         }))
         res.json({ success: true, message: 'Welcome back to the app!' });
       } else {
-        res.json({ success: false, message: 'Ups, something went wrong!' });
+        res.json({ success: false, message: 'Ups, something went wrong!.'+err });
       }
     })
   } else {

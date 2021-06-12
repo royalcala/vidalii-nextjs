@@ -167,7 +167,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        admin Pages:<br />
+                        admin Pages Policies:<br />
                         {props.accessPolicies.admin.map((key, index) => {
                             return (
                                 <>
@@ -192,7 +192,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                         })}
                     </Grid>
                     <Grid item xs={6}>
-                        admin API:<br />
+                        admin API Policies:<br />
                         {props.accessPolicies.api.map((key, index) => {
                             return (
                                 <>

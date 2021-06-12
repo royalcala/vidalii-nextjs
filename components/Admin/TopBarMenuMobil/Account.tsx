@@ -5,8 +5,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
 import Cookies from 'js-cookie'
 import { AUTH } from '../../../util/getCookies';
-export default function Account() {
-    const menuId = 'primary-search-account-menu';
+export default function Account(props: { closeMenu: any }) {
+    const menuId = 'primary-search-account-menu2';
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -14,7 +14,8 @@ export default function Account() {
     };
     const isMenuOpen = Boolean(anchorEl);
 
-    const handleMenuClose = () => {
+    const handleMenuClose = () => {        
+        props.closeMenu()
         setAnchorEl(null);
 
     };
@@ -31,10 +32,12 @@ export default function Account() {
             //remove session
             Cookies.remove(AUTH)
             location.reload();
+            // handleMenuClose()
         }}>Logout</MenuItem>
     </Menu>
 
     return (
+        <>
         <MenuItem onClick={handleProfileMenuOpen}>
             <IconButton
                 aria-label="account of current user"
@@ -45,8 +48,9 @@ export default function Account() {
                 <AccountCircle />
             </IconButton>
             <p>Profile</p>
-            {popMenu}
         </MenuItem>
+        {popMenu}
+        </>
 
     )
 }

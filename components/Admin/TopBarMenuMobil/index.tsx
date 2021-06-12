@@ -62,7 +62,7 @@ export default function MenuMobil() {
                 </IconButton>
                 <p>Profile</p>
             </MenuItem> */}
-            <Account/>  
+            <Account closeMenu={handleMobileMenuClose}/>  
         </Menu>
     );
 
