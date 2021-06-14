@@ -5,7 +5,7 @@ export default function DefaultPage() {
     // if (props.restricted)
     //     return props.restricted
     return (
-        <Admin breadcrumb={{ page1: "Default", page2: "" }} login={true} >
+        <Admin breadcrumb={{ page1: "Default", page2: "" }} >
             <div>hola2</div>
         </Admin>
     )

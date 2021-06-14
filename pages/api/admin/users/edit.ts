@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from '../../../../util/db'
-import Users from '../../../../models/users'
+import dbConnect from '../../../../util/dbAdmin'
+import Users from '../../../../models/admin/users'
 import { hash } from 'bcrypt';
 
 export const accessPolicy = 'api_admin_users_edit'

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 // import dbConnect from '../../../../util/mongodb'
-import Users from '../../../../models/users'
+import Users from '../../../../models/admin/users'
 import { api } from '../../../../util/getData'
 
 export default api(Users)

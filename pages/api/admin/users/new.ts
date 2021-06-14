@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { hash } from 'bcrypt';
-import dbConnect from '../../../../util/db'
-import Users from '../../../../models/users'
+import dbConnect from '../../../../util/dbAdmin'
+import Users from '../../../../models/admin/users'
 
 
 export default async function newUser(req: NextApiRequest, res: NextApiResponse) {

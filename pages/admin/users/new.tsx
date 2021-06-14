@@ -46,7 +46,7 @@ export default function New() {
     setDialog(true)
   }
   return (
-    <Admin breadcrumb={{ page1: "Users", page2: "New User" }} progress={progress} login={true}>
+    <Admin breadcrumb={{ page1: "Users", page2: "New User" }} progress={progress}>
       <form onSubmit={handleSubmit(onSubmit)} className={classes.root}>
         <Grid container spacing={3}>
           <Grid item xs={12}>

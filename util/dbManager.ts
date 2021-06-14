@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
-
+import Path from 'path'
+// import dynamic from 'next/dynamic'
+// const DynamicComponent = dynamic(() => import('../models/manager/companies'))
 const MONGODB_URI = process.env.MONGODB_URI_MANAGER
 
 if (!MONGODB_URI) {
@@ -18,29 +20,43 @@ let cached = global.mongoose
 
 if (!cached) {
   //@ts-ignore
-  cached = global.mongoose = { conn: null, promise: null }
+  cached = global.mongoose = { conn: null, models: null }
 }
 
-async function dbConnect() {
+const modelsPaths = require.context(
+  '../models/manager',
+  true,
+  /\.(ts)$/
+  // (mode = 'sync')
+);
+const Schemas = modelsPaths.keys().map(dir => {
+  return modelsPaths(dir).Schema
+})
+async function dbConnect(): Promise<mongoose.Connection> {
   if (cached.conn) {
     return cached.conn
   }
 
-  if (!cached.promise) {
-    const opts = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      bufferCommands: false,
-      bufferMaxEntries: 0,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    }
-    //@ts-ignore
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose
-    })
+  const opts = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    bufferCommands: false,
+    bufferMaxEntries: 0,
+    useFindAndModify: false,
+    useCreateIndex: true,
   }
-  cached.conn = await cached.promise
+  //@ts-ignore
+  cached.conn = await mongoose.createConnection(MONGODB_URI, opts)
+  const paths = modelsPaths.keys()
+  for (let index = 0; index < Schemas.length; index++) {
+    const path = paths[index]
+    const schema = Schemas[index]
+    // console.log(path)
+    const extension = Path.extname(path)
+    const fileName = Path.basename(path, extension)
+    // console.log(fileName)
+    await cached.conn.model(fileName, schema);
+  }
   return cached.conn
 }
 

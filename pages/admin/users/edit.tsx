@@ -1,6 +1,6 @@
 import React from 'react';
-import dbConnect from '../../../util/db'
-import Users from '../../../models/users'
+import dbConnect from '../../../util/dbAdmin'
+import Users from '../../../models/admin/users'
 import { GetServerSidePropsContext } from 'next'
 import { useForm, Controller } from "react-hook-form";
 import Button from '@material-ui/core/Button'
