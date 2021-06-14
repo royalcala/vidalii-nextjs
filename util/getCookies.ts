@@ -4,6 +4,8 @@ export const AUTH = 'AUTH'
 export function getCookies(req: GetServerSidePropsContext['req']) {
     // const cookies = cookie.parse(req.headers.cookie || '')
     return {
-        "AUTH": req.cookies?.[AUTH]
+        AUTH: req.cookies?.[AUTH],
+        seq: req.cookies?.company_seq,
+        uri: req.cookies?.uri
     }
 }

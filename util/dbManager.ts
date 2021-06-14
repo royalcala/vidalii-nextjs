@@ -30,8 +30,13 @@ const modelsPaths = require.context(
   // (mode = 'sync')
 );
 const Schemas = modelsPaths.keys().map(dir => {
-  return modelsPaths(dir).Schema
-})
+  if (modelsPaths(dir)?.Schema)
+    return modelsPaths(dir).Schema
+  else {
+    console.warn('Doesnt has export Schema:', dir)
+    return null
+  }
+}).filter(v => v !== null)
 async function dbConnect(): Promise<mongoose.Connection> {
   if (cached.conn) {
     return cached.conn

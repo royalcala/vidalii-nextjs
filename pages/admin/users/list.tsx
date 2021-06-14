@@ -1,7 +1,7 @@
-import { GetServerSidePropsContext } from 'next';
-import Users from "../../../models/admin/users"
-import { ValidateAccessPolicy } from '../../../util/auth'
-import dbConnect from '../../../util/dbAdmin'
+// import { GetServerSidePropsContext } from 'next';
+// import Users from "../../../models/admin/users"
+// import { ValidateAccessPolicy } from '../../../util/auth'
+// import dbConnect from '../../../util/dbAdmin'
 import Admin from '../../../components/Admin'
 import List from '../../../components/List'
 import TableRow from '@material-ui/core/TableRow';
@@ -59,4 +59,4 @@ export default function UsersList(props: PropsFindMany) {
     )
 }
 
-export const getServerSideProps = findMany(Users, 25, accessPolicy)
+export const getServerSideProps = findMany('users', 25, accessPolicy)

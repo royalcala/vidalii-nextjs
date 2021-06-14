@@ -26,7 +26,7 @@ export const Definition: mongoose.SchemaDefinition = {
 }
 
 export const Schema = new mongoose.Schema(Definition)
-export default mongoose.models.Users || mongoose.model('Users', Schema)
+// export default mongoose.models.Users || mongoose.model('Users', Schema)
 //export default User //mongoose.model('Users', Schema)
 
 // UserSchema.pre("save", async function () {

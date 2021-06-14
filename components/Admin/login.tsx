@@ -79,7 +79,7 @@ export default function Login() {
                 </Typography>
                 <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
                     <Controller
-                        name="company_seq"
+                        name="seq"
                         control={control}
                         defaultValue=""
                         rules={{ required: 'Company required' }}

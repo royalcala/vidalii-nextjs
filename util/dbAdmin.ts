@@ -7,13 +7,17 @@ const modelsPaths = require.context(
   // (mode = 'sync')
 );
 const Schemas = modelsPaths.keys().map(dir => {
-  return modelsPaths(dir).Schema
-})
-
+  if (modelsPaths(dir)?.Schema)
+    return modelsPaths(dir).Schema
+  else {
+    console.warn('Doesnt has export Schema:', dir)
+    return null
+  }
+}).filter(v => v !== null)
 class Db {
   private conn = new Map<number, mongoose.Connection>()
   constructor() { }
-  private getConn(seq: number, uri: string) {
+  private getConn(seq: number, uri: string) {    
     if (this.conn.get(seq)?.readyState && this.conn.get(seq)?.readyState === 1) {
       return this.conn.get(seq)
     }
@@ -21,7 +25,7 @@ class Db {
       return this.createConn(seq, uri)
   }
 
-  private async createConn(seq: number, uri: string) {
+  private async createConn(seq: number, uri: string) {    
     const conn = await mongoose.createConnection(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -32,7 +36,7 @@ class Db {
     })
     const paths = modelsPaths.keys()
     for (let index = 0; index < Schemas.length; index++) {
-      const path = paths[index]
+      const path = paths[index]      
       const schema = Schemas[index]
       const extension = Path.extname(path)
       const fileName = Path.basename(path, extension)
@@ -43,9 +47,7 @@ class Db {
   }
 
   async getModel(name: string, { seq, uri }: { seq: number, uri: string }) {
-
     const conn = await this.getConn(seq, uri)
-
     return conn?.models[name] as mongoose.Model<any>
   }
 

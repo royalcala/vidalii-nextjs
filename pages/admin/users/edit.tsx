@@ -1,6 +1,6 @@
 import React from 'react';
-import dbConnect from '../../../util/dbAdmin'
-import Users from '../../../models/admin/users'
+import dbAdmin from '../../../util/dbAdmin'
+// import Users from '../../../models/admin/users'
 import { GetServerSidePropsContext } from 'next'
 import { useForm, Controller } from "react-hook-form";
 import Button from '@material-ui/core/Button'
@@ -87,7 +87,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
     return (
         <Admin breadcrumb={{ page1: "Users", page2: "Edit User" }}
             progress={progress}
-            login={{ access:props.access, accessPolicy }}
+            login={{ access: props.access, accessPolicy }}
         >
             <form onSubmit={handleSubmit(onSubmit)} className={classes.root}>
                 <Grid container spacing={3}>
@@ -234,7 +234,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    await dbConnect()
+    // await dbConnect()
     const access = await ValidateAccessPolicy(context, accessPolicy)
     if (access === false)
         return {
@@ -242,7 +242,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
                 access
             }
         }
-    const user = await Users.findById(context.query._id)
+    const model = await dbAdmin.getModel('users', access)
+    const user = await model.findById(context.query._id)
     const accessPolicies = await getAccessPolicies()
     return {
         props: {

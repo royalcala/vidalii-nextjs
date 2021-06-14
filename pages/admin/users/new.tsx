@@ -7,6 +7,8 @@ import Admin from "../../../components/Admin";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
+import { GetServerSidePropsContext } from 'next';
+import { ValidateAccessPolicy } from '../../../util/auth';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -20,8 +22,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-
-export default function New() {
+export const accessPolicy = "admin_users_new"
+export default function New(props: { access: boolean }) {
   const classes = useStyles();
   const { control, handleSubmit, getValues } = useForm();
   const [progress, setProgress] = React.useState(false)
@@ -46,7 +48,14 @@ export default function New() {
     setDialog(true)
   }
   return (
-    <Admin breadcrumb={{ page1: "Users", page2: "New User" }} progress={progress}>
+    <Admin
+      breadcrumb={{ page1: "Users", page2: "New User" }}
+      progress={progress}
+      login={{
+        accessPolicy,
+        access: props.access
+      }}
+    >
       <form onSubmit={handleSubmit(onSubmit)} className={classes.root}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -119,4 +128,20 @@ export default function New() {
 
     </Admin>
   )
+}
+
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const access = await ValidateAccessPolicy(context, accessPolicy)
+  if (access === false)
+    return {
+      props: {
+        access
+      }
+    }
+  return {
+    props: {
+      access: true
+    }
+  }
 }

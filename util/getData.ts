@@ -1,11 +1,15 @@
 import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next';
-import dbConnect from './dbAdmin'
+import dbAdmin from './dbAdmin'
 import mongoose from 'mongoose'
-import { ValidateAccessPolicy } from './auth'
-export const api = (model: mongoose.Model<any>) => async (req: NextApiRequest, res: NextApiResponse) => {
-    await dbConnect()
+import { Jwt, ValidateAccessPolicy } from './auth'
+export const apiFindMany = (modelName: string, accessPolicy: string) => async (req: NextApiRequest, res: NextApiResponse) => {
+    // await dbConnect()
+    const access = await ValidateAccessPolicy({ req, res }, accessPolicy)
+    if (access === false)
+        res.status(401).json({ success: false, msg: 'You dont have access' })
     const { skip = 0, limit = 25, filter = {} } = req.body
-    // console.log(req.body)
+    
+    const model = await dbAdmin.getModel(modelName, access as Jwt)
     const data = await model.find(filter).limit(limit).skip(skip)
     //     .limit(limit)
     //     .skip(skip)
@@ -19,8 +23,8 @@ export type PropsFindMany = {
     access: boolean
 }
 
-export const findMany = (model: mongoose.Model<any>, limit: number, accessPolicy: string) => async (context: GetServerSidePropsContext) => {
-    await dbConnect()
+export const findMany = (modelName: string, limit: number, accessPolicy: string) => async (context: GetServerSidePropsContext) => {
+    // await dbConnect()
     const access = await ValidateAccessPolicy(context, accessPolicy)
     if (access === false)
         return {
@@ -28,6 +32,7 @@ export const findMany = (model: mongoose.Model<any>, limit: number, accessPolicy
                 access
             }
         }
+    const model = await dbAdmin.getModel(modelName, access)
     const data = await model.find().limit(limit)
     // .skip((page - 1) * limit)
     // .exec();
@@ -51,7 +56,7 @@ export type PropsFindOneById = {
 }
 
 export const findOneById = (model: mongoose.Model<any>, accessPolicy: string) => async (context: GetServerSidePropsContext) => {
-    await dbConnect()
+    // await dbConnect()
     const access = await ValidateAccessPolicy(context, accessPolicy)
     if (access === false)
         return {
