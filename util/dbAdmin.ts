@@ -1,109 +1,63 @@
-import mongoose from 'mongoose'
-import Path from 'path'
-const modelsPaths = require.context(
-  '../models/admin',
-  true,
-  /\.(ts)$/
-  // (mode = 'sync')
-);
-const Schemas = modelsPaths.keys().map(dir => {
-  if (modelsPaths(dir)?.Schema)
-    return modelsPaths(dir).Schema
-  else {
-    console.warn('Doesnt has export Schema:', dir)
-    return null
-  }
-}).filter(v => v !== null)
+import { MikroORM, Options, IDatabaseDriver, Connection } from "@mikro-orm/core";
+import { Users } from '../entities/admin/Users'
+import { hash, hashSync } from 'bcrypt';
+// $ sudo -u postgres psql postgres
+// postgres=# \password postgres
+type OptionsConn = {
+  host: string,
+  port: number,
+  user: string,
+  password: string,
+  dbName: string
+}
+
 class Db {
-  private conn = new Map<number, mongoose.Connection>()
+  private conn = new Map<number, MikroORM>()
   constructor() { }
-  private getConn(seq: number, uri: string) {    
-    if (this.conn.get(seq)?.readyState && this.conn.get(seq)?.readyState === 1) {
-      return this.conn.get(seq)
+  async getConn(id_company: number, options: OptionsConn) {
+
+    if (this.conn.get(id_company)?.isConnected) {
+      return this.conn.get(id_company)
     }
     else
-      return this.createConn(seq, uri)
+      return this.createConn(id_company, options)
   }
 
-  private async createConn(seq: number, uri: string) {    
-    const conn = await mongoose.createConnection(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      bufferCommands: false,
-      bufferMaxEntries: 0,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    })
-    const paths = modelsPaths.keys()
-    for (let index = 0; index < Schemas.length; index++) {
-      const path = paths[index]      
-      const schema = Schemas[index]
-      const extension = Path.extname(path)
-      const fileName = Path.basename(path, extension)
-      await conn.model(fileName, schema);
+  private async createConn(id_company: number, options: OptionsConn) {
+    const config: Options = {
+      dbName: options.dbName,
+      type: "postgresql",
+      host: options.host,
+      port: options.port,
+      user: options.user,
+      password: options.password,
+      entities: [
+        Users
+      ],
+      debug: process.env.NODE_ENV === "development",
     }
-    this.conn.set(seq, conn)
-    return this.conn.get(seq)
+    const conn = await MikroORM.init(config);
+    this.conn.set(id_company, conn)
+    if (process.env.NODE_ENV === 'development')
+      await this.init_schemas(id_company)
+    return this.conn.get(id_company)
   }
-
-  async getModel(name: string, { seq, uri }: { seq: number, uri: string }) {
-    const conn = await this.getConn(seq, uri)
-    return conn?.models[name] as mongoose.Model<any>
+  private async init_schemas(id_company: number) {
+    console.log('initSchema-development')
+    const conn = this.conn.get(id_company)
+    const generator = conn?.getSchemaGenerator();
+    await generator?.createSchema();
+    const user = new Users()
+    user.admin = true
+    user.email = "alcala.rao@gmail.com"
+    user.firstname = "Roy"
+    user.lastname = "alcala"
+    user.password = await hash("alcala",10)
+    user.groups=[]
+    await conn?.em.persistAndFlush(user)    
+    // await generator?.dropSchema();
+    // await generator?.updateSchema();
   }
-
 }
 
 export default new Db()
-
-// const MONGODB_URI = process.env.MONGODB_URI
-
-// if (!MONGODB_URI) {
-//   throw new Error(
-//     'Please define the MONGODB_URI environment variable inside .env.local'
-//   )
-// }
-
-/**
- * Global is used here to maintain a cached connection across hot reloads
- * in development. This prevents connections growing exponentially
- * during API Route usage.
- */
-//@ts-ignore
-// let cached = global.mongoose
-
-// if (!cached) {
-//   //@ts-ignore
-//   cached = global.mongoose = { conn: null, promise: null }
-// }
-// const cached: { conn, promise }[] = []
-
-// async function dbConnect(company_seq: number = 1) {
-//   if (cached?.[company_seq]) {
-//     return cached[company_seq].conn
-//   }
-
-//   if (!cached?.[company_seq]?.promise) {
-//     cached[company_seq] = {
-//       conn: null,
-//       promise: null
-//     }
-//     const opts = {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true,
-//       bufferCommands: false,
-//       bufferMaxEntries: 0,
-//       useFindAndModify: false,
-//       useCreateIndex: true,
-//       autoIndex: false //TODO create all the indexes with vidaliiManager
-//     }
-//     //@ts-ignore
-//     cached[company_seq].promise = await mongoose.connect(MONGODB_URI, opts)
-//     // .then((mongoose) => {
-//     //   return mongoose
-//     // })
-//   }
-//   cached[company_seq].conn = cached[company_seq].promise
-//   return cached[company_seq].conn
-// }
-
-// export default dbConnect

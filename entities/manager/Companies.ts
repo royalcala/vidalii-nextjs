@@ -20,10 +20,10 @@ export class Companies {
   user: string;
 
   @Property()
-  pass: string;
+  password: string;
 
   @Property()
-  db: string;
+  dbName: string;
 
   // constructor(name: string, email: string) {
   //   this.name = name;

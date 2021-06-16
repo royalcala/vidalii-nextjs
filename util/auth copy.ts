@@ -15,7 +15,7 @@ export const ValidateAccessPolicy = async (context: GetServerSidePropsContext | 
     // await dbAdmin()
     try {
         const decoded = verify(cookies.AUTH, SECRET) as Jwt
-        const users = await dbAdmin.getModel('users', decoded)
+        const users = await dbAdmin.getConn(decoded.company.id)
         const user = await users.findById(decoded._id)
         if (user?.admin !== true) {
             const found = user.groups.find((value: string) => value === accessPolicy)
