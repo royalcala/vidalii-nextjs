@@ -1,0 +1,28 @@
+###login
+POST http://localhost:3000/api/admin/session/login
+Content-Type: application/json
+
+{
+	"id_company":1,
+	"email":"alcala.rao@gmail.com",
+	"password":"alcala"
+}
+###new
+POST http://localhost:3000/api/admin/users/new
+Content-Type: application/json
+
+{
+	"firstname":"roy",
+	"lastname":"alcala.rao@gmail.com",
+	"email":"alcala.rao@gmail.com",
+	"password":"alcala",
+	"admin":true,
+	"groups":[]
+}
+###list
+POST http://localhost:3000/api/admin/users/list
+Content-Type: application/json
+
+{
+"offset":2
+}

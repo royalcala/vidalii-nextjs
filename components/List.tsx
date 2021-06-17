@@ -45,7 +45,7 @@ function FilterButton() {
 
 }
 export default function List(props: {
-    options: boolean,
+    optionsColumn: boolean,
     api: string,
     head: {
         label: string,
@@ -71,7 +71,7 @@ export default function List(props: {
                 },
                 body: JSON.stringify({
                     limit: rowsPerPage,
-                    skip: page * rowsPerPage,
+                    offset: page * rowsPerPage,
                     filter
                 })
             })
@@ -118,7 +118,7 @@ export default function List(props: {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                {props.options && <TableCell />}                            
+                                {props.optionsColumn && <TableCell />}                            
                                 {props.head.map(
                                     ({ label }, index) => <TableCell
                                         key={index}

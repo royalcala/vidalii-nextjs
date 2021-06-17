@@ -1,25 +1,22 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { hash } from 'bcrypt';
-import dbConnect from '../../../../util/dbAdmin'
-import Users from '../../../../models/admin/users'
+import dbAdmin from '../../../../util/dbAdmin'
+import { Users } from '../../../../entities/admin/Users'
+import { Jwt, ValidateAccessPolicy } from '../../../../util/auth';
+import { validateSync } from 'class-validator';
 
-
+export const accessPolicy = 'api_admin_users_new'
 export default async function newUser(req: NextApiRequest, res: NextApiResponse) {
-    //TODO check cookie auth is a valid jwt
-    await dbConnect()
-    const user = req.body
-
-    hash(user.password, 10, async function (err, hash) {
-        // Store hash in your password DB.
-        user.password = hash
-        const schema = new Users(user)//returns only the schema
-        try {
-            const data = await schema.save();//returns all with _id            
-            res.status(201).json({ success: true, data })
-
-        } catch (err) {
-            console.log(err.message)
-            res.status(400).json({ sucess: false, data: null, msg: err.message })
-        }
-    });
+    const access = await ValidateAccessPolicy({ req, res }, accessPolicy)
+    if (!access)
+        res.status(401).json({ success: false, msg: 'You dont have access' })
+    const jwt = access as Jwt
+    const conn = await dbAdmin.getConn(jwt.company)
+    const user = conn.em.assign(new Users(), req.body)
+    const errors = validateSync(user)
+    if (errors.length > 0)
+        res.json({ success: false, errors })
+    user.password = await hash(user.password, 10)
+    await conn.em.persistAndFlush(user)
+    res.status(201).json({ success: true, data: user })
 }

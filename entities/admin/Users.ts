@@ -5,7 +5,9 @@ import {
     Unique,
     ArrayType
   } from "@mikro-orm/core";
-  
+  import {
+    IsEmail,
+  } from 'class-validator';
   @Entity()
   export class Users {
     @PrimaryKey()
@@ -17,6 +19,7 @@ import {
     @Property()
     lastname:string
 
+    @IsEmail()
     @Property()
     email:string
 

@@ -7,6 +7,8 @@ import Admin from "../../../components/Admin";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { GetServerSidePropsContext } from 'next';
 import { ValidateAccessPolicy } from '../../../util/auth';
 const useStyles = makeStyles((theme: Theme) =>

@@ -1,13 +1,10 @@
-// import { GetServerSidePropsContext } from 'next';
-// import Users from "../../../models/admin/users"
-// import { ValidateAccessPolicy } from '../../../util/auth'
-// import dbConnect from '../../../util/dbAdmin'
 import Admin from '../../../components/Admin'
 import List from '../../../components/List'
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import { findMany, PropsFindMany } from '../../../util/getData';
+import { serverPropsfindMany, PropsFindMany } from '../../../util/getData';
+import { Users } from '../../../entities/admin/Users';
 
 export const accessPolicy = 'admin_users_list'
 export default function UsersList(props: PropsFindMany) {
@@ -19,7 +16,7 @@ export default function UsersList(props: PropsFindMany) {
             }}
         >
             <List
-                options={true}
+                optionsColumn={true}
                 api="/api/admin/users/list"
                 totalRows={props.total}
                 initialDocs={props.data}
@@ -59,4 +56,6 @@ export default function UsersList(props: PropsFindMany) {
     )
 }
 
-export const getServerSideProps = findMany('users', 25, accessPolicy)
+export const getServerSideProps = serverPropsfindMany(Users, accessPolicy,{
+    limit:25
+})
