@@ -4,8 +4,17 @@ import dbAdmin from '../../../../util/dbAdmin'
 import { Users } from '../../../../entities/admin/Users'
 import { Jwt, ValidateAccessPolicy } from '../../../../util/auth';
 import { validateSync } from 'class-validator';
-
+import { apiPersistData } from '../../../../util/mutateData'
 export const accessPolicy = 'api_admin_users_new'
+
+apiPersistData({
+    accessPolicy,
+    entity: Users,
+    beforePersist: async (user: Users) => {
+        user.password = await hash(user.password, 10)
+    }
+})
+
 export default async function newUser(req: NextApiRequest, res: NextApiResponse) {
     const access = await ValidateAccessPolicy({ req, res }, accessPolicy)
     if (!access)
