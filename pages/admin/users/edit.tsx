@@ -1,7 +1,4 @@
 import React from 'react';
-import dbAdmin from '../../../util/dbAdmin'
-// import Users from '../../../models/admin/users'
-import { GetServerSidePropsContext } from 'next'
 import { useForm, Controller } from "react-hook-form";
 import Button from '@material-ui/core/Button'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
@@ -12,9 +9,9 @@ import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import { getAccessPolicies } from "../../api/admin/session/accessPolicies";
-import { ValidateAccessPolicy } from '../../../util/auth';
-
+import { serverPropsFindById, ServerPropsFindById } from '../../../util/getData'
+import { Users } from '../../../entities/admin/Users';
+import { getAccessPolicies, AccessPolicies } from '../../api/admin/session/accessPolicies';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -35,13 +32,13 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 export const accessPolicy = "admin_users_edit"
-export default function EditUser(props: { access: boolean, user: any, accessPolicies: { api: string[], admin: string[] } }) {
+export default function EditUser(props: ServerPropsFindById<Users, { accessPolicies: AccessPolicies }>) {
+    console.log({ props })
     const classes = useStyles();
     const { control, handleSubmit, getValues } = useForm();
     const [progress, setProgress] = React.useState(false)
     const [dialog, setDialog] = React.useState(false)
     const [msgDialog, setMsgDialog] = React.useState("")
-    // const [adminCheck, setAdminCheck] = React.useState(props.user?.admin || false);
 
     async function onSubmit(data: any) {
         const adminPages = Object.entries(data.adminPages).map(
@@ -63,12 +60,11 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
         delete data.adminPages
         delete data.adminApi
         data.groups = [...adminPages, ...adminApi]
-        // alert(JSON.stringify(data))
-        // return false
+
         if (data?.password === '')
             delete data.password
         setProgress(true)
-        data._id = props.user._id
+        data.id = props.data.id
         const resp = await fetch('/api/admin/users/edit', {
             method: 'POST',
             headers: {
@@ -99,7 +95,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                         <Controller
                             name="firstname"
                             control={control}
-                            defaultValue={props.user.firstname}
+                            defaultValue={props.data.firstname}
                             rules={{ required: 'Firstname required' }}
                             render={({ field, fieldState: { error } }) => <TextField
                                 {...field}
@@ -112,7 +108,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                         <Controller
                             name="lastname"
                             control={control}
-                            defaultValue={props.user.lastname}
+                            defaultValue={props.data.lastname}
                             rules={{ required: "Lastname required" }}
                             render={({ field, fieldState: { error } }) => <TextField
                                 {...field} label="lastname" className={classes.textField}
@@ -123,7 +119,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                         <Controller
                             name="email"
                             control={control}
-                            defaultValue={props.user.email}
+                            defaultValue={props.data.email}
                             rules={{
                                 required: "Email required",
                                 pattern: {
@@ -153,7 +149,7 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                         <Controller
                             name="admin"
                             control={control}
-                            defaultValue={props.user.admin || false}
+                            defaultValue={props.data.admin || false}
                             // rules={{ required: 'Firstname required' }}
                             render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
                                 {...field}
@@ -168,14 +164,14 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                     </Grid>
                     <Grid item xs={6}>
                         admin Pages Policies:<br />
-                        {props.accessPolicies.admin.map((key, index) => {
+                        {props.otherData.accessPolicies.admin.map((key, index) => {
                             return (
                                 <>
                                     <Controller
                                         key={index}
                                         name={"adminPages." + key}
                                         control={control}
-                                        defaultValue={props.user.groups.find((value: string) => value === key) ? true : false}
+                                        defaultValue={props.data.groups.find((value: string) => value === key) ? true : false}
                                         render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
                                             {...field}
                                             checked={field.value}
@@ -193,14 +189,14 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
                     </Grid>
                     <Grid item xs={6}>
                         admin API Policies:<br />
-                        {props.accessPolicies.api.map((key, index) => {
+                        {props.otherData.accessPolicies.api.map((key, index) => {
                             return (
                                 <>
                                     <Controller
                                         key={index}
                                         name={"adminApi." + key}
                                         control={control}
-                                        defaultValue={props.user.groups.find((value: string) => value === key) ? true : false}
+                                        defaultValue={props.data.groups.find((value: string) => value === key) ? true : false}
                                         render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
                                             {...field}
                                             checked={field.value}
@@ -233,23 +229,13 @@ export default function EditUser(props: { access: boolean, user: any, accessPoli
 }
 
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-    // await dbConnect()
-    const access = await ValidateAccessPolicy(context, accessPolicy)
-    if (access === false)
+export const getServerSideProps = serverPropsFindById({
+    accessPolicy,
+    entity: Users,
+    otherData: async () => {
+        const accessPolicies = await getAccessPolicies()
         return {
-            props: {
-                access
-            }
-        }
-    const model = await dbAdmin.getModel('users', access)
-    const user = await model.findById(context.query._id)
-    const accessPolicies = await getAccessPolicies()
-    return {
-        props: {
-            user: JSON.parse(JSON.stringify(user)),
-            accessPolicies,
-            access: true
+            accessPolicies
         }
     }
-}
+})

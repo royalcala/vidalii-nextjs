@@ -1,34 +1,34 @@
 import {
-    PrimaryKey,
-    Entity,
-    Property,
-    Unique,
-    ArrayType
-  } from "@mikro-orm/core";
-  import {
-    IsEmail,
-  } from 'class-validator';
-  @Entity()
-  export class Users {
-    @PrimaryKey()
-    id: number;
+  PrimaryKey,
+  Entity,
+  Property,
+  Unique,
+  ArrayType
+} from "@mikro-orm/core";
+import {
+  IsEmail,
+} from 'class-validator';
+@Entity()
+export class Users {
+  @PrimaryKey()
+  id: number;
 
-    @Property()
-    firstname:string
+  @Property()
+  firstname: string
 
-    @Property()
-    lastname:string
+  @Property()
+  lastname: string
 
-    @IsEmail()
-    @Property()
-    email:string
+  @IsEmail()
+  @Property()
+  email: string
 
-    @Property()
-    password:string
+  @Property()
+  password: string
 
-    @Property()
-    admin:boolean
+  @Property({ nullable: true })
+  admin: boolean
 
-    @Property({ type: ArrayType, nullable: true })
-    groups: string[];
-  }
+  @Property({ type: ArrayType, nullable: true })
+  groups: string[];
+}

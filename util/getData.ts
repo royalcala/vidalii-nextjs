@@ -2,6 +2,7 @@ import { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from 'next
 import dbAdmin from './dbAdmin'
 import { EntityName } from '@mikro-orm/core'
 import { Jwt, ValidateAccessPolicy } from './auth'
+import { EntityClass } from '@mikro-orm/core/typings'
 export const apiFindMany = (
     entity: EntityName<any>,
     accessPolicy: string,
@@ -26,7 +27,7 @@ export const apiFindMany = (
 export type PropsFindMany = {
     data: any[],
     total: number,
-    access: boolean
+    access: boolean,
 }
 
 export const serverPropsfindMany = (
@@ -66,25 +67,38 @@ export const serverPropsfindMany = (
         }
     }
 
-export type PropsFindOneById = {
-    data: any,
-    access: boolean
+export type ServerPropsFindById<T, TOther=any> = {
+    data: T,
+    access: boolean,
+    otherData: TOther
 }
+export const serverPropsFindById = (opt: {
+    accessPolicy: string,
+    entity: EntityClass<any>,
+    otherData?: (data: any) => Promise<any>
+}) => async (context: GetServerSidePropsContext) => {
+    const access = await ValidateAccessPolicy(context, opt.accessPolicy)
+    if (access === false)
+        return {
+            props: {
+                data: null,
+                otherData: null,
+                access
+            }
+        }
+    const jwt = access as Jwt
+    const conn = await dbAdmin.getConn(jwt.company)
+    const props = {
+        data: null,
+        otherData: null,
+        access: true
+    }
+    let one = await conn.em.findOne(opt.entity, context.query.id)
+    if (opt?.otherData) {
+        let data = await opt.otherData(one)
+        props.otherData = JSON.parse(JSON.stringify(data))
+    }
+    props.data = JSON.parse(JSON.stringify(one))
+    return { props }
 
-// export const findOneById = (model: mongoose.Model<any>, accessPolicy: string) => async (context: GetServerSidePropsContext) => {
-//     // await dbConnect()
-//     const access = await ValidateAccessPolicy(context, accessPolicy)
-//     if (access === false)
-//         return {
-//             props: {
-//                 access
-//             }
-//         }
-//     const data = await model.findById(context.query._id)
-//     return {
-//         props: {
-//             data: JSON.parse(JSON.stringify(data)),
-//             access
-//         }
-//     }
-// }
+}

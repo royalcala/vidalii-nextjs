@@ -5,9 +5,9 @@ import { Users } from '../../../../entities/admin/Users'
 import { Jwt, ValidateAccessPolicy } from '../../../../util/auth';
 import { validateSync } from 'class-validator';
 import { apiPersistData } from '../../../../util/mutateData'
-export const accessPolicy = 'api_admin_users_new'
 
-apiPersistData({
+export const accessPolicy = 'api_admin_users_new'
+export default apiPersistData({
     accessPolicy,
     entity: Users,
     beforePersist: async (user: Users) => {
@@ -15,17 +15,17 @@ apiPersistData({
     }
 })
 
-export default async function newUser(req: NextApiRequest, res: NextApiResponse) {
-    const access = await ValidateAccessPolicy({ req, res }, accessPolicy)
-    if (!access)
-        res.status(401).json({ success: false, msg: 'You dont have access' })
-    const jwt = access as Jwt
-    const conn = await dbAdmin.getConn(jwt.company)
-    const user = conn.em.assign(new Users(), req.body)
-    const errors = validateSync(user)
-    if (errors.length > 0)
-        res.json({ success: false, errors })
-    user.password = await hash(user.password, 10)
-    await conn.em.persistAndFlush(user)
-    res.status(201).json({ success: true, data: user })
-}
+// export default async function newUser(req: NextApiRequest, res: NextApiResponse) {
+//     const access = await ValidateAccessPolicy({ req, res }, accessPolicy)
+//     if (!access)
+//         res.status(401).json({ success: false, msg: 'You dont have access' })
+//     const jwt = access as Jwt
+//     const conn = await dbAdmin.getConn(jwt.company)
+//     const user = conn.em.assign(new Users(), req.body)
+//     const errors = validateSync(user)
+//     if (errors.length > 0)
+//         res.json({ success: false, errors })
+//     user.password = await hash(user.password, 10)
+//     await conn.em.persistAndFlush(user)
+//     res.status(201).json({ success: true, data: user })
+// }

@@ -32,7 +32,25 @@ export default function New(props: { access: boolean }) {
   const [dialog, setDialog] = React.useState(false)
   const [msgDialog, setMsgDialog] = React.useState("")
   async function onSubmit(data: any) {
-    // getValues()
+    const adminPages = Object.entries(data.adminPages).map(
+      ([key, value]) => {
+        if (value)
+          return key
+        else
+          return false
+      }
+    ).filter(value => value !== false)
+    const adminApi = Object.entries(data.adminApi).map(
+      ([key, value]) => {
+        if (value)
+          return key
+        else
+          return false
+      }
+    ).filter(value => value !== false)
+    delete data.adminPages
+    delete data.adminApi
+    data.groups = [...adminPages, ...adminApi]
     setProgress(true)
     const resp = await fetch('/api/admin/users/new', {
       method: 'POST',
@@ -115,6 +133,23 @@ export default function New(props: { access: boolean }) {
                 error={!!error}
                 helperText={error ? error.message : null}
               />}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Controller
+              name="admin"
+              control={control}
+              defaultValue={false}
+              // rules={{ required: 'Firstname required' }}
+              render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
+                {...field}
+                checked={field.value}
+                color="primary"
+                inputProps={{ 'aria-label': 'secondary checkbox' }}
+              />}
+                label="Admin"
+              />
+              }
             />
           </Grid>
         </Grid>

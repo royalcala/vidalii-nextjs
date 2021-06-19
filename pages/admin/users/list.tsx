@@ -29,7 +29,7 @@ export default function UsersList(props: PropsFindMany) {
                     return (
                         <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                             <TableCell key="lastname" >
-                                <a target="_blank" href={"/admin/users/edit?_id=" + user._id}>
+                                <a target="_blank" href={"/admin/users/edit?id=" + user.id}>
                                     <OpenInNewIcon />
                                 </a>
                             </TableCell>

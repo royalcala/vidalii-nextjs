@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Jwt, ValidateAccessPolicy } from "./auth";
 import { EntityClass } from '@mikro-orm/core/typings'
 import dbAdmin from "./dbAdmin";
+import { validateSync } from 'class-validator';
 
 export const apiPersistData = <T>(opt: {
     accessPolicy: string,
@@ -12,16 +13,21 @@ export const apiPersistData = <T>(opt: {
     const access = await ValidateAccessPolicy({ req, res }, opt.accessPolicy)
     if (!access)
         res.status(401).json({ success: false, msg: 'You dont have access' })
-    const jwt = access as Jwt
-    const conn = await dbAdmin.getConn(jwt.company)
-    //@ts-ignore
-    const user = conn.em.assign(new opt.entity(), req.body)
-    // const errors = validateSync(user)
-    // if (errors.length > 0)
-    //     res.json({ success: false, errors })
-    // user.password = await hash(user.password, 10)
-    // await conn.em.persistAndFlush(user)
-    // res.status(201).json({ success: true, data: user })
+    else {
+        const jwt = access as Jwt
+        const conn = await dbAdmin.getConn(jwt.company)
+        //@ts-ignore
+        const data = conn.em.assign(new opt.entity(), req.body)
+        if (opt?.beforePersist)
+            await opt.beforePersist(data)
+        const errors = validateSync(data)
+        if (errors?.length > 0)
+            res.json({ success: false, errors })
+        else {
+            await conn.em.persistAndFlush(data)
+            res.status(201).json({ success: true, data })
+        }
+    }
 }
 
 export const apiUpdateData = (req: NextApiRequest, res: NextApiResponse) => {

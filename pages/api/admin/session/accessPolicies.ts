@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import glob from 'glob'
 import { Project } from "ts-morph";
 
+export type AccessPolicies = {
+    api:string[],
+    admin:string[]
+}
 export function getAccessPolicies() {
     const project = new Project();
     project.addSourceFilesAtPaths('pages/api/**/*.{tsx,js,ts}');
