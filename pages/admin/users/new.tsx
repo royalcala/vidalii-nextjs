@@ -7,10 +7,10 @@ import Admin from "../../../components/Admin";
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Grid from '@material-ui/core/Grid';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { GetServerSidePropsContext } from 'next';
 import { ValidateAccessPolicy } from '../../../util/auth';
+import { Users } from '../../../entities/admin/Users';
+import Link from 'next/link'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -31,26 +31,8 @@ export default function New(props: { access: boolean }) {
   const [progress, setProgress] = React.useState(false)
   const [dialog, setDialog] = React.useState(false)
   const [msgDialog, setMsgDialog] = React.useState("")
+  const [linkToUser, setLinkToUser] = React.useState(null)
   async function onSubmit(data: any) {
-    const adminPages = Object.entries(data.adminPages).map(
-      ([key, value]) => {
-        if (value)
-          return key
-        else
-          return false
-      }
-    ).filter(value => value !== false)
-    const adminApi = Object.entries(data.adminApi).map(
-      ([key, value]) => {
-        if (value)
-          return key
-        else
-          return false
-      }
-    ).filter(value => value !== false)
-    delete data.adminPages
-    delete data.adminApi
-    data.groups = [...adminPages, ...adminApi]
     setProgress(true)
     const resp = await fetch('/api/admin/users/new', {
       method: 'POST',
@@ -61,8 +43,11 @@ export default function New(props: { access: boolean }) {
     })
     const json = await resp.json();
     setProgress(false)
-    if (json.success === true)
+    if (json.success === true) {
       setMsgDialog("User Created")
+      const user = json.data as Users
+      setLinkToUser(user.id)
+    }
     else
       setMsgDialog("error:" + json.msg)
     setDialog(true)
@@ -81,6 +66,14 @@ export default function New(props: { access: boolean }) {
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary">New User</Button>
           </Grid>
+          {
+            linkToUser &&
+            <Grid item xs={12}>
+              <Link href={"/admin/users/edit?id=" + linkToUser}>
+                <a>Edit New User:{linkToUser}</a>
+              </Link>
+            </Grid>
+          }
           <Grid item>
             <Controller
               name="firstname"
@@ -133,23 +126,6 @@ export default function New(props: { access: boolean }) {
                 error={!!error}
                 helperText={error ? error.message : null}
               />}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name="admin"
-              control={control}
-              defaultValue={false}
-              // rules={{ required: 'Firstname required' }}
-              render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
-                {...field}
-                checked={field.value}
-                color="primary"
-                inputProps={{ 'aria-label': 'secondary checkbox' }}
-              />}
-                label="Admin"
-              />
-              }
             />
           </Grid>
         </Grid>

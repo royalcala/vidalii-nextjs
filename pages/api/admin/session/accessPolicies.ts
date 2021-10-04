@@ -39,16 +39,4 @@ export function getAccessPolicies() {
 export default async function accessPolicies(req: NextApiRequest, res: NextApiResponse) {
     const { api, admin } = getAccessPolicies()
     res.json({ api, admin })
-    // console.log(api[0])
-    // console.log(project.getfi)
-    // console.log(project.getDirectories())
-    //    const p =  project.getSourceFile('login.ts')
-    // console.log(p)
-    // res.json({ admin, api })
-    // console.log('test: ',sourceFile.getBaseName())
-    // console.log('test: ',sourceFile.getVariableDeclaration('groupAccess')?.getText())
-    // console.log('test: ',sourceFile.getVariableDeclaration('groupAccess')?.getFullText())
-    // console.log('test: ',sourceFile.getVariableDeclaration('groupAccess')?.getName())
-    // console.log('test: ',sourceFile.getVariableDeclaration('groupAccess')?.getInitializer()?.getText())
-    // res.send('')
 }

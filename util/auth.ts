@@ -14,7 +14,8 @@ export type Jwt = {
 
 export const ValidateAccessPolicy = async (
     context: GetServerSidePropsContext | { req: NextApiRequest, res: NextApiResponse },
-     accessPolicy: string) => {
+    accessPolicy: string
+) => {
     const cookies = getCookies(context.req)
     try {
         const decoded = verify(cookies.AUTH, SECRET) as Jwt
@@ -23,7 +24,7 @@ export const ValidateAccessPolicy = async (
         if (user?.admin !== true) {
             const found = user?.groups.find((value: string) => value === accessPolicy)
             if (!found)
-                return false 
+                return false
         }
         return decoded
     } catch (err) {
@@ -31,21 +32,3 @@ export const ValidateAccessPolicy = async (
         return false
     }
 }
-
-// export const Auth_API = async (context: { req: NextApiRequest, res: NextApiResponse }, accessPolicy: string, entity: EntityName<any>) => {
-//     const cookies = getCookies(context.req)
-//     try {
-//         const decoded = verify(cookies.AUTH, SECRET) as Jwt
-//         const conn = await dbAdmin.getConn(decoded.company)
-//         const user = await conn?.em.findOne(Users, decoded.user.id)
-//         if (user?.admin !== true) {
-//             const found = user?.groups.find((value: string) => value === accessPolicy)
-//             if (!found)
-//                 return false
-//         }
-//         return decoded
-//     } catch (err) {
-//         //error in verify()
-//         return false
-//     }
-// }

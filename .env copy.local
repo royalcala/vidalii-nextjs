@@ -1,0 +1,7 @@
+MONGODB_URI_MANAGER=mongodb+srv://vidalii:Alcala1*@cluster0.mjtlw.mongodb.net/vidaliiManager?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://vidalii:Alcala1*@cluster0.mjtlw.mongodb.net/test0?retryWrites=true&w=majority
+SECRET=MySecret1*
+MANAGER_HOST =localhost
+MANAGER_USERNAME = sammy
+MANAGER_PASSWORD = alcala
+MANAGER_PORT = 5432

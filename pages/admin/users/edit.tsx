@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 export const accessPolicy = "admin_users_edit"
 export default function EditUser(props: ServerPropsFindById<Users, { accessPolicies: AccessPolicies }>) {
-    console.log({ props })
+    console.log('****************',props.data)
     const classes = useStyles();
     const { control, handleSubmit, getValues } = useForm();
     const [progress, setProgress] = React.useState(false)
@@ -171,7 +171,7 @@ export default function EditUser(props: ServerPropsFindById<Users, { accessPolic
                                         key={index}
                                         name={"adminPages." + key}
                                         control={control}
-                                        defaultValue={props.data.groups.find((value: string) => value === key) ? true : false}
+                                        defaultValue={props.data?.groups?.find((value: string) => value === key) ? true : false}
                                         render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
                                             {...field}
                                             checked={field.value}
@@ -196,7 +196,7 @@ export default function EditUser(props: ServerPropsFindById<Users, { accessPolic
                                         key={index}
                                         name={"adminApi." + key}
                                         control={control}
-                                        defaultValue={props.data.groups.find((value: string) => value === key) ? true : false}
+                                        defaultValue={props.data?.groups?.find((value: string) => value === key) ? true : false}
                                         render={({ field, fieldState: { error } }) => <FormControlLabel control={<Checkbox
                                             {...field}
                                             checked={field.value}

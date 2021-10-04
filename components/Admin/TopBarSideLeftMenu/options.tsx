@@ -5,7 +5,7 @@ import ListIcon from '@material-ui/icons/List';
 const Options: {
     [key: string]: {
         Icon: React.FunctionComponent,
-        items: {
+        items: {            
             Icon: React.FunctionComponent,
             text: string,
             route: string
@@ -16,12 +16,12 @@ const Options: {
 Options.Users = {
     Icon: () => <PeopleIcon />,
     items: [
-        {
+        {            
             Icon: () => <ListIcon />,
             text: "List Users",
             route: "/admin/users/list"
         },
-        {
+        {            
             Icon: () => <PersonAddIcon />,
             text: "New User",
             route: "/admin/users/new"

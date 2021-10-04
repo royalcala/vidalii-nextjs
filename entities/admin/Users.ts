@@ -11,7 +11,7 @@ import {
 @Entity()
 export class Users {
   @PrimaryKey()
-  id: number;
+  _id: number;
 
   @Property()
   firstname: string
